@@ -57,6 +57,7 @@ const useGetTopFarmsByApr = (isIntersecting: boolean) => {
           cakePriceBusd,
           totalLiquidity,
           farm.lpAddresses[ChainId.MAINNET],
+          farm.tokenPerBlock
         )
         return { ...farm, apr: cakeRewardsApr, lpRewardsApr }
       })

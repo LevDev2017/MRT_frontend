@@ -26,6 +26,8 @@ interface FarmCardActionsProps {
   addLiquidityUrl?: string
   cakePrice?: BigNumber
   lpLabel?: string
+  withdrawLocked?: boolean
+  onStaked: () => void
 }
 
 const IconButtonWrapper = styled.div`
@@ -46,6 +48,8 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
   addLiquidityUrl,
   cakePrice,
   lpLabel,
+  withdrawLocked,
+  onStaked,
 }) => {
   const { t } = useTranslation()
   const { onStake } = useStakeFarms(pid)
@@ -54,10 +58,11 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
   const dispatch = useAppDispatch()
   const { account } = useWeb3React()
   const lpPrice = useLpTokenPrice(tokenName)
-
   const handleStake = async (amount: string) => {
     await onStake(amount)
     dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
+
+    onStaked()
   }
 
   const handleUnstake = async (amount: string) => {
@@ -105,7 +110,7 @@ const StakeAction: React.FC<FarmCardActionsProps> = ({
       </Button>
     ) : (
       <IconButtonWrapper>
-        <IconButton variant="tertiary" onClick={onPresentWithdraw} mr="6px">
+        <IconButton variant="tertiary" onClick={onPresentWithdraw} disabled={withdrawLocked} mr="6px">
           <MinusIcon color="primary" width="14px" />
         </IconButton>
         <IconButton

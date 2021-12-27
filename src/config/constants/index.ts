@@ -100,3 +100,8 @@ export const BLOCKED_ADDRESSES: string[] = [
 export { default as farmsConfig } from './farms'
 export { default as poolsConfig } from './pools'
 export { default as ifosConfig } from './ifo'
+
+// added new
+export const StakingContractAddress = {
+  56: '0x368cd43661B9cE6D24370D17C0B0E5C2B79e7439'
+}

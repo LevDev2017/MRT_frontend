@@ -32,11 +32,11 @@ const PoolCard: React.FC<{ pool: DeserializedPool; account: string }> = ({ pool,
         <AprRow pool={pool} stakedBalance={stakedBalance} />
         <Flex mt="20px" justifyContent="space-between">
           {/* <Text >{`${t('APY')}:`}</Text> */}
-          <Text mb="5px" fontSize="16px">
+          <Text mb="5px" fontSize="16px" color="secondary">
             {t('Withdraw Lock')}
           </Text>
-          <Tag variant="primary" startIcon={<LockIcon width="12px" color="primary" mr="4px" />}>
-            {harvestInterval + t('D')}
+          <Tag variant="primary" startIcon={<LockIcon width="14px" color="primary" mr="4px" />}>
+            {harvestInterval / 3600 / 24 + t('D')}
           </Tag>
           {/* <Text mb="5px" fontSize="16px" color="secondary">
             {harvestInterval + t('D')}

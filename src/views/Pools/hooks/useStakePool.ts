@@ -46,7 +46,8 @@ const useStakePool = (sousId: number, isUsingBnb = false) => {
       } else if (isUsingBnb) {
         await sousStakeBnb(sousChefContract, amount)
       } else {
-        await sousStake(sousChefContract, amount, decimals)
+        // await sousStake(sousChefContract, amount, decimals)
+        await stakeFarm(masterChefContract, sousId, amount)
       }
       dispatch(updateUserStakedBalance(sousId, account))
       dispatch(updateUserBalance(sousId, account))

@@ -5,48 +5,48 @@ const serializedTokens = serializeTokens()
 
 const pools: SerializedPoolConfig[] = [
   {
-    sousId: 0,
+    sousId: 3,
     stakingToken: serializedTokens.mrt,
     earningToken: serializedTokens.mrt,
     contractAddress: {
       97: '',
       // 97: '0xd3af5fe61dbaf8f73149bfcfa9fb653ff096029a',
-      56: '0xb15f39d979208F05474CF4B8f66Fd46f6f4A77f3',
+      56: '0x368cd43661B9cE6D24370D17C0B0E5C2B79e7439',
     },
     poolCategory: PoolCategory.CORE,
     harvest: true,
-    tokenPerBlock: '10',
-    harvestInterval: 15,
+    tokenPerBlock: '40',
+    harvestInterval: 1296000,
     sortOrder: 1,
     isFinished: false,
   },
   {
-    sousId: 0,
+    sousId: 4,
     stakingToken: serializedTokens.mrt,
     earningToken: serializedTokens.mrt,
     contractAddress: {
       97: '',
-      56: '0xb15f39d979208F05474CF4B8f66Fd46f6f4A77f3',
+      56: '0x368cd43661B9cE6D24370D17C0B0E5C2B79e7439',
     },
     poolCategory: PoolCategory.CORE,
     harvest: true,
     sortOrder: 999,
-    tokenPerBlock: '0.07471',
-    harvestInterval: 30
+    tokenPerBlock: '40',
+    harvestInterval: 2592000
   },
   {
-    sousId: 0,
+    sousId: 5,
     stakingToken: serializedTokens.mrt,
     earningToken: serializedTokens.mrt,
     contractAddress: {
       97: '',
-      56: '0xb15f39d979208F05474CF4B8f66Fd46f6f4A77f3',
+      56: '0x368cd43661B9cE6D24370D17C0B0E5C2B79e7439',
     },
     poolCategory: PoolCategory.CORE,
     harvest: true,
     sortOrder: 999,
-    tokenPerBlock: '0.4516',
-    harvestInterval: 60,
+    tokenPerBlock: '40',
+    harvestInterval: 5184000,
   },
   /*
   {

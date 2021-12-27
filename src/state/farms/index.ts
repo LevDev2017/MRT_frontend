@@ -9,6 +9,8 @@ import {
   fetchFarmUserAllowances,
   fetchFarmUserTokenBalances,
   fetchFarmUserStakedBalances,
+  fetchFarmUserCanHarvest,
+  fetchFarmUserLastDepositTimes,
 } from './fetchFarmUser'
 import { SerializedFarmsState, SerializedFarm } from '../types'
 
@@ -19,6 +21,8 @@ const noAccountFarmConfig = farmsConfig.map((farm) => ({
     tokenBalance: '0',
     stakedBalance: '0',
     earnings: '0',
+    canHarvest: false,
+    lastDepositTime: '0'
   },
 }))
 
@@ -57,6 +61,8 @@ interface FarmUserDataResponse {
   tokenBalance: string
   stakedBalance: string
   earnings: string
+  canHarvest: boolean
+  lastDepositTime: string
 }
 
 export const fetchFarmUserDataAsync = createAsyncThunk<FarmUserDataResponse[], { account: string; pids: number[] }>(
@@ -67,6 +73,8 @@ export const fetchFarmUserDataAsync = createAsyncThunk<FarmUserDataResponse[], {
     const userFarmTokenBalances = await fetchFarmUserTokenBalances(account, farmsToFetch)
     const userStakedBalances = await fetchFarmUserStakedBalances(account, farmsToFetch)
     const userFarmEarnings = await fetchFarmUserEarnings(account, farmsToFetch)
+    const userFarmCanHarvest = await fetchFarmUserCanHarvest(account, farmsToFetch)
+    const userFarmLastDepositTimes = await fetchFarmUserLastDepositTimes(account, farmsToFetch)
 
     return userFarmAllowances.map((farmAllowance, index) => {
       return {
@@ -75,6 +83,8 @@ export const fetchFarmUserDataAsync = createAsyncThunk<FarmUserDataResponse[], {
         tokenBalance: userFarmTokenBalances[index],
         stakedBalance: userStakedBalances[index],
         earnings: userFarmEarnings[index],
+        canHarvest: userFarmCanHarvest[index],
+        lastDepositTime: userFarmLastDepositTimes[index],
       }
     })
   },

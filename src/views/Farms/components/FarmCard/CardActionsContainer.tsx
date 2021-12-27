@@ -13,6 +13,8 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import StakeAction from './StakeAction'
 import HarvestAction from './HarvestAction'
 import useApproveFarm from '../../hooks/useApproveFarm'
+import useCountdown from './Countdown/useCountdown'
+import CountDown from './Countdown'
 
 const Action = styled.div`
   padding-top: 16px;
@@ -34,11 +36,11 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
   const { toastError } = useToast()
   const [requestedApproval, setRequestedApproval] = useState(false)
   const { pid, lpAddresses } = farm
-  const { allowance, tokenBalance, stakedBalance, earnings } = farm.userData || {}
+  const { allowance, tokenBalance, stakedBalance, earnings, lastDepositTime, canHarvest } = farm.userData || {}
   const lpAddress = getAddress(lpAddresses)
   const isApproved = account && allowance && allowance.isGreaterThan(0)
   const dispatch = useAppDispatch()
-
+  /* Get MRT Token Contract */
   const lpContract = useERC20(lpAddress)
 
   const { onApprove } = useApproveFarm(lpContract)
@@ -56,6 +58,15 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
     }
   }, [onApprove, dispatch, account, pid, t, toastError])
 
+  let withdrawLocked = true
+  const setWithdrawLocked = (flag) => {
+    withdrawLocked = flag
+  }
+  // const onStaked = useCallback(() => setWithdrawLocked(false), [setWithdrawLocked])
+  const onStaked = () => {
+    withdrawLocked = false
+  }
+
   const renderApprovalOrStakeButton = () => {
     return isApproved ? (
       <StakeAction
@@ -67,6 +78,8 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
         lpLabel={lpLabel}
         cakePrice={cakePrice}
         addLiquidityUrl={addLiquidityUrl}
+        withdrawLocked={withdrawLocked}
+        onStaked={onStaked}
       />
     ) : (
       <Button mt="8px" width="100%" disabled={requestedApproval} onClick={handleApprove}>
@@ -74,6 +87,51 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
       </Button>
     )
   }
+
+  let lastDepositTimeVal = lastDepositTime.toNumber()
+  const utcNow = Date.now() / 1000;
+  
+  lastDepositTimeVal = utcNow - 1 // test code
+  const [secondsRemaining, setSecondsRemaining] = useState(0)
+
+  let isCountingdown = false
+  let timer: ReturnType<typeof setTimeout>
+  let startCountingValue = 0
+  const timerCallback = () => {
+    if (startCountingValue === 0) {
+      setSecondsRemaining(secondsRemaining - 1)
+      console.log('counting ', secondsRemaining)
+    } else {
+      setSecondsRemaining(startCountingValue)
+      startCountingValue = 0
+      console.log('init ', secondsRemaining)
+    }
+    if (isCountingdown && secondsRemaining === 0) {
+      console.log('clear ', secondsRemaining)
+      clearTimeout(timer)
+      isCountingdown = false
+      countDownVisibility = false
+    }
+  }
+
+  const withdrawLockPeriod = farm.pid === 0 ? 30 : (farm.pid === 1 ? 45 : 50)
+  const deadLine = lastDepositTimeVal + withdrawLockPeriod
+  let countDownVisibility = false
+  if (/* !account || !isApproved || */ lastDepositTimeVal === 0) {
+    countDownVisibility = false
+  } else if (lastDepositTimeVal < utcNow && utcNow < deadLine) {
+    countDownVisibility = true
+
+    if (isCountingdown === false) {
+      isCountingdown = true
+      startCountingValue = deadLine - utcNow
+      setTimeout(timerCallback, 1000)
+      console.log('set timer ', startCountingValue)
+    }
+  }
+
+  countDownVisibility = false
+  // withdrawLocked = isCountingdown
 
   return (
     <Action>
@@ -85,7 +143,12 @@ const CardActions: React.FC<FarmCardActionsProps> = ({ farm, account, addLiquidi
           {t('Earned')}
         </Text>
       </Flex>
-      <HarvestAction earnings={earnings} pid={pid} />
+      <HarvestAction earnings={earnings} pid={pid} canHarvest={canHarvest} />
+
+      <Flex justifyContent="flex-end" style={{ display: countDownVisibility ? 'flex' : 'none'}}>
+        <CountDown secondsRemaining={secondsRemaining} />
+      </Flex>
+
       <Flex>
         <Text bold textTransform="uppercase" color="secondary" fontSize="12px" pr="4px">
           {t('MRT-BNB')}

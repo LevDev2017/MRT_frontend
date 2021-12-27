@@ -12,6 +12,7 @@ import {
   Link,
   CalculateIcon,
   IconButton,
+  Message
 } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
@@ -32,6 +33,7 @@ interface StakeModalProps {
   stakingTokenPrice: number
   isRemovingStake?: boolean
   onDismiss?: () => void
+  onStaked?: () => void
 }
 
 const StyledLink = styled(Link)`
@@ -57,6 +59,7 @@ const StakeModal: React.FC<StakeModalProps> = ({
   stakingTokenPrice,
   isRemovingStake = false,
   onDismiss,
+  onStaked,
 }) => {
   const { sousId, stakingToken, earningTokenPrice, apr, userData, stakingLimit, earningToken } = pool
   const { t } = useTranslation()
@@ -150,6 +153,7 @@ const StakeModal: React.FC<StakeModalProps> = ({
             symbol: stakingToken.symbol,
           }),
         )
+        onStaked()
       }
       setPendingTx(false)
       onDismiss()
@@ -243,16 +247,13 @@ const StakeModal: React.FC<StakeModalProps> = ({
         <PercentageButton onClick={() => handleChangePercent(100)}>{t('Max')}</PercentageButton>
       </Flex>
       {!isRemovingStake && (
-        <Flex mt="24px" alignItems="center" justifyContent="space-between">
-          <Text mr="8px" color="textSubtle">
-            {t('Annual ROI at current rates')}:
-          </Text>
-          <AnnualRoiContainer alignItems="center" onClick={() => setShowRoiCalculator(true)}>
-            <AnnualRoiDisplay>${formattedAnnualRoi}</AnnualRoiDisplay>
-            <IconButton variant="text" scale="sm">
-              <CalculateIcon color="textSubtle" width="18px" />
-            </IconButton>
-          </AnnualRoiContainer>
+        <Flex mt="24px" alignItems="center" justifyContent="space-between" style={{ maxWidth: '360px' }}>
+          <Message variant="warning" mb="24px">
+            <Text>
+              {t("Warning: Staking additional tokens will reset the lock timer for ALL of your staked tokens in this pool.",
+              )}
+            </Text>
+        </Message>
         </Flex>
       )}
       <Button

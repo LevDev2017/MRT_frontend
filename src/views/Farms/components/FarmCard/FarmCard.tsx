@@ -9,6 +9,7 @@ import ExpandableSectionButton from 'components/ExpandableSectionButton'
 import { BASE_ADD_LIQUIDITY_URL } from 'config'
 import { getAddress } from 'utils/addressHelpers'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
+import { StakingContractAddress } from 'config/constants'
 import DetailsSection from './DetailsSection'
 import CardHeading from './CardHeading'
 import CardActionsContainer from './CardActionsContainer'
@@ -54,22 +55,25 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
 
   const totalValueFormatted =
     farm.liquidity && farm.liquidity.gt(0)
-      ? `$${farm.liquidity.toNumber().toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+      ? `$${farm.liquidity.toNumber().toLocaleString(undefined, { maximumFractionDigits: 7 })}`
       : ''
-
+  
+  const totlaLpTokenValueFormatted = farm.lpTotalInQuoteToken && farm.lpTotalInQuoteToken.gt(0)
+  ? `${farm.lpTotalInQuoteToken.toNumber().toLocaleString(undefined, { maximumFractionDigits: 7 })}`
+  : ''
+      
   const lpLabel = "MTR";/* arm.lpSymbol && farm.lpSymbol.toUpperCase().replace('PANCAKE', '') */
  
   const earnLabel = widrawLockLabel[index]/* farm.dual ? farm.dual.earnLabel : t('CAKE + Fees') */
-  const aprTest = aprLabel[index]; /* by Code for test */
-
+ 
   const liquidityUrlPathParts = getLiquidityUrlPathParts({
     quoteTokenAddress: farm.quoteToken.address,
     tokenAddress: farm.token.address,
   })
   const addLiquidityUrl = `${BASE_ADD_LIQUIDITY_URL}/${liquidityUrlPathParts}`
+  const ContractAddress = getAddress(StakingContractAddress)
   const lpAddress = getAddress(farm.lpAddresses)
   const isPromotedFarm = farm.token.symbol === 'CAKE'
-
   return (
     <StyledCard isActive={isPromotedFarm}>
       <FarmCardInnerContainer>
@@ -84,7 +88,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           <Flex justifyContent="space-between" alignItems="center">
             <Text>{t('APR')}:</Text>
             <Text bold style={{ display: 'flex', alignItems: 'center' }}>
-              { aprTest /* farm.apr */ ? (
+              {  farm.apr  ? (
                 <ApyButton
                   variant="text-and-button"
                   pid={farm.pid}
@@ -93,8 +97,8 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
                   lpLabel={lpLabel}
                   addLiquidityUrl={addLiquidityUrl}
                   cakePrice={cakePrice}
-                  apr={ aprTest /* farm.apr */}
-                  displayApr={ aprTest.toString() /* displayApr */ }
+                  apr={  farm.apr }
+                  displayApr={ displayApr.toString() /* displayApr */ }
                 />
               ) : (
                 <Skeleton height={24} width={80} />
@@ -103,8 +107,8 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           </Flex>
         )}
         <Flex justifyContent="space-between">
-          <Text>{t('Withraw Lock')}:</Text>
-          <Tag variant="primary" startIcon={<LockIcon width="18px" color="primary" mr="4px" />}>
+          <Text>{t('Withdraw Lock')}:</Text>
+          <Tag variant="primary" startIcon={<LockIcon width="14px" color="primary" mr="4px" />}>
             {earnLabel}
           </Tag>
         </Flex>
@@ -115,6 +119,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           cakePrice={cakePrice}
           addLiquidityUrl={addLiquidityUrl}
         />
+
       </FarmCardInnerContainer>
 
       <ExpandingWrapper>
@@ -124,10 +129,12 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
         />
         {showExpandableSection && (
           <DetailsSection
+            farm={farm}
             removed={removed}
-            bscScanAddress={getBscScanLink(lpAddress, 'address')}
-            infoAddress={`/info/pool/${lpAddress}`}
+            bscScanAddress={getBscScanLink(ContractAddress, 'address')}
+            infoAddress={`https://pancakeswap.finance/info/pool/${lpAddress}`}
             totalValueFormatted={totalValueFormatted}
+            totalLpValueFormatted = {totlaLpTokenValueFormatted}
             lpLabel={lpLabel}
             addLiquidityUrl={addLiquidityUrl}
           />

@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import erc20ABI from 'config/abi/erc20.json'
-import masterchefABI from 'config/abi/masterchef.json'
+/* import masterchefABI from 'config/abi/masterchef.json' */
+import masterchefABI from 'config/abi/metaRewards.json'
 import multicall from 'utils/multicall'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { SerializedFarmConfig } from 'config/constants/types'
@@ -55,13 +56,31 @@ export const fetchFarmUserStakedBalances = async (account: string, farmsToFetch:
   return parsedStakedBalances
 }
 
+export const fetchFarmUserLastDepositTimes = async (account: string, farmsToFetch: SerializedFarmConfig[]) => {
+  const masterChefAddress = getMasterChefAddress()
+
+  const calls = farmsToFetch.map((farm) => {
+    return {
+      address: masterChefAddress,
+      name: 'userInfo',
+      params: [farm.pid, account],
+    }
+  })
+
+  const rawUserInfos = await multicall(masterchefABI, calls)
+  const lastDepositTimes = rawUserInfos.map((userInfo) => {
+    return new BigNumber(userInfo.lastDepositTime._hex).toJSON()
+  })
+  return lastDepositTimes
+}
+
 export const fetchFarmUserEarnings = async (account: string, farmsToFetch: SerializedFarmConfig[]) => {
   const masterChefAddress = getMasterChefAddress()
 
   const calls = farmsToFetch.map((farm) => {
     return {
       address: masterChefAddress,
-      name: 'pendingCake',
+      name: 'pendingToken',
       params: [farm.pid, account],
     }
   })
@@ -71,4 +90,22 @@ export const fetchFarmUserEarnings = async (account: string, farmsToFetch: Seria
     return new BigNumber(earnings).toJSON()
   })
   return parsedEarnings
+}
+
+export const fetchFarmUserCanHarvest = async (account: string, farmsToFetch: SerializedFarmConfig[]) => {
+  const masterChefAddress = getMasterChefAddress()
+
+  const calls = farmsToFetch.map((farm) => {
+    return {
+      address: masterChefAddress,
+      name: 'canHarvest',
+      params: [farm.pid, account],
+    }
+  })
+
+  const rawCanHarvest = await multicall(masterchefABI, calls)
+  const parsedCanHarvest = rawCanHarvest.map((resItem) => {
+    return resItem[0]
+  })
+  return parsedCanHarvest
 }

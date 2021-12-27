@@ -15,6 +15,7 @@ import {
   Button,
   Link,
   HelpIcon,
+  useModal,
 } from '@pancakeswap/uikit'
 import { BASE_BSC_SCAN_URL } from 'config'
 import { useBlock } from 'state/block/hooks'
@@ -25,6 +26,8 @@ import { registerToken } from 'utils/wallet'
 import { getBscScanLink } from 'utils'
 import Balance from 'components/Balance'
 import { getPoolBlockInfo } from 'views/Pools/helpers'
+import EmWithdrawModal from '../EmWithdrawModal'
+
 
 interface ExpandedFooterProps {
   pool: DeserializedPool
@@ -91,6 +94,8 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
     placement: 'bottom',
   })
 
+  const [onEmergencyWithdraw] = useModal(<EmWithdrawModal PID={pool.sousId} />)
+
   return (
     <ExpandedWrapper flexDirection="column">
       <Flex mb="2px" justifyContent="space-between" alignItems="center">
@@ -99,9 +104,6 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
           {totalStaked && totalStaked.gte(0) ? (
             <>
               <Balance small value={getTotalStakedBalance()} decimals={0} unit={` ${stakingToken.symbol}`} />
-              <span ref={totalStakedTargetRef}>
-                <HelpIcon color="textSubtle" width="20px" ml="6px" mt="4px" />
-              </span>
             </>
           ) : (
             <Skeleton width="90px" height="21px" />
@@ -115,10 +117,7 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
         <Flex alignItems="flex-start">
           {totalStaked && totalStaked.gte(0) ? (
             <>
-              <Balance small value={getTotalStakedBalance()} decimals={0} unit={` ${stakingToken.symbol}`} />
-              <span ref={totalStakedTargetRef}>
-                <HelpIcon color="textSubtle" width="20px" ml="6px" mt="4px" />
-              </span>
+              <Balance small value={pool.stakingTokenPrice * getTotalStakedBalance()} decimals={10} prefix={`${'$'}`} />
             </>
           ) : (
             <Skeleton width="90px" height="21px" />
@@ -168,7 +167,7 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
         </Flex>
       )}
       <Flex mb="2px" justifyContent="flex-end">
-        <LinkExternal href={`/info/token/${earningToken.address}`} bold={false} small>
+        <LinkExternal href={`https://pancakeswap.finance/info/token/${earningToken.address}`} bold={false} small>
           {t('See Token Info')}
         </LinkExternal>
       </Flex>
@@ -189,11 +188,17 @@ const ExpandedFooter: React.FC<ExpandedFooterProps> = ({ pool, account }) => {
           </LinkExternal>
         </Flex>
       )}
-{/* Add emergency withdrawl */}
-      <Flex mb="2px" justifyContent="flex-end">
-        <Link href="localhost:3000/pools" bold={false} color="red">
-          {t('Emergency Withdrawal')}
-        </Link>
+      <Flex justifyContent="flex-end">
+        <Button
+          variant="text"
+          p="0"
+          height="auto"
+          onClick={onEmergencyWithdraw}
+        >
+          <Text color="red">
+            {t('Emergency Withdrawal')}
+          </Text>
+        </Button>
       </Flex>
       {account && isMetaMaskInScope && tokenAddress && (
         <Flex justifyContent="flex-end">

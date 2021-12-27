@@ -30,6 +30,7 @@ const CardActions: React.FC<CardActionsProps> = ({ pool, stakedBalance }) => {
   const needsApproval = !allowance.gt(0) && !isBnbPool
   const isStaked = stakedBalance.gt(0)
   const isLoading = !userData
+  const canHarvest = userData.canHarvest
 
   return (
     <Flex flexDirection="column">
@@ -51,6 +52,7 @@ const CardActions: React.FC<CardActionsProps> = ({ pool, stakedBalance }) => {
               earningTokenPrice={earningTokenPrice}
               isBnbPool={isBnbPool}
               isLoading={isLoading}
+              canHarvest={canHarvest}
             />
           </>
         )}
@@ -58,9 +60,9 @@ const CardActions: React.FC<CardActionsProps> = ({ pool, stakedBalance }) => {
           <InlineText color={isStaked ? 'secondary' : 'textSubtle'} textTransform="uppercase" bold fontSize="12px">
             {isStaked ? stakingToken.symbol : t('Stake')}{' '}
           </InlineText>
-          <InlineText color={isStaked ? 'textSubtle' : 'secondary'} textTransform="uppercase" bold fontSize="12px">
+          {/* <InlineText color={isStaked ? 'textSubtle' : 'secondary'} textTransform="uppercase" bold fontSize="12px">
             {isStaked ? t('Staked') : `${stakingToken.symbol}`}
-          </InlineText>
+          </InlineText> */}
         </Box>
         {needsApproval ? (
           <ApprovalAction pool={pool} isLoading={isLoading} />

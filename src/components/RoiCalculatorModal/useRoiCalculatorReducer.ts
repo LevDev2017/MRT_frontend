@@ -51,10 +51,10 @@ export interface RoiCalculatorReducerState {
 
 const initialState: RoiCalculatorReducerState = {
   controls: {
-    compounding: true,
+    compounding: false,
     compoundingFrequency: 1, // how many compound in a day , e.g. 1 = once a day, 0.071 - once per 2 weeks
     activeCompoundingIndex: 0, // active compounding selected in
-    stakingDuration: 3,
+    stakingDuration: 0,
     mode: CalculatorMode.ROI_BASED_ON_PRINCIPAL,
     editingCurrency: EditingCurrency.USD,
   },

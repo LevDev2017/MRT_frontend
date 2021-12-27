@@ -1,8 +1,10 @@
 import BigNumber from 'bignumber.js'
-import masterchefABI from 'config/abi/masterchef.json'
+/* import masterchefABI from 'config/abi/masterchef.json' */
+import masterchefABI from 'config/abi/metaRewards.json'
 import erc20 from 'config/abi/erc20.json'
 import { getAddress, getMasterChefAddress } from 'utils/addressHelpers'
 import { BIG_TEN, BIG_ZERO } from 'utils/bigNumber'
+import { getBalanceAmount } from 'utils/formatBalance'
 import multicall from 'utils/multicall'
 import { SerializedFarm, SerializedBigNumber } from '../types'
 
@@ -13,6 +15,9 @@ type PublicFarmData = {
   tokenPriceVsQuote: SerializedBigNumber
   poolWeight: SerializedBigNumber
   multiplier: string
+  lpTokenValue: SerializedBigNumber
+  tokenPerBlock: SerializedBigNumber
+  withdrawLockPeriod: SerializedBigNumber
 }
 
 const fetchFarm = async (farm: SerializedFarm): Promise<PublicFarmData> => {
@@ -71,31 +76,39 @@ const fetchFarm = async (farm: SerializedFarm): Promise<PublicFarmData> => {
   const lpTotalInQuoteToken = quoteTokenAmountMc.times(new BigNumber(2))
 
   // Only make masterchef calls if farm has pid
-  const [info, totalAllocPoint] =
-    pid || pid === 0
+  const [info, totalAllocPoint, tokenPerBlock] =
+    (pid || pid === 0)
       ? await multicall(masterchefABI, [
-          {
-            address: getMasterChefAddress(),
-            name: 'poolInfo',
-            params: [pid],
-          },
-          {
-            address: getMasterChefAddress(),
-            name: 'totalAllocPoint',
-          },
-        ])
+        {
+          address: getMasterChefAddress(),
+          name: 'poolInfo',
+          params: [pid],
+        },
+        {
+          address: getMasterChefAddress(),
+          name: 'totalAllocPoint',
+        },
+        {
+          address: getMasterChefAddress(),
+          name: 'tokenPerBlock',
+        },
+      ])
       : [null, null]
 
   const allocPoint = info ? new BigNumber(info.allocPoint?._hex) : BIG_ZERO
+  const withdrawLockPeriod = info ? new BigNumber(info.withdrawLockPeriod?._hex) : BIG_ZERO
   const poolWeight = totalAllocPoint ? allocPoint.div(new BigNumber(totalAllocPoint)) : BIG_ZERO
-
+  const lpTokenValue = (info && info.balance) ? new BigNumber(info.balance?._hex).div(BIG_TEN.pow(quoteTokenDecimals)) : BIG_ZERO
   return {
     tokenAmountTotal: tokenAmountTotal.toJSON(),
     lpTotalSupply: new BigNumber(lpTotalSupply).toJSON(),
-    lpTotalInQuoteToken: lpTotalInQuoteToken.toJSON(),
+    lpTotalInQuoteToken: lpTokenValue.toJSON(),
     tokenPriceVsQuote: quoteTokenAmountTotal.div(tokenAmountTotal).toJSON(),
     poolWeight: poolWeight.toJSON(),
     multiplier: `${allocPoint.div(100).toString()}X`,
+    lpTokenValue: lpTokenValue.toJSON(),
+    tokenPerBlock: new BigNumber(tokenPerBlock).div(BIG_TEN.pow(tokenDecimals)).toJSON(),
+    withdrawLockPeriod: withdrawLockPeriod.toJSON()
   }
 }
 

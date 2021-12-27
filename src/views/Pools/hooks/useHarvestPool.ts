@@ -14,6 +14,7 @@ const options = {
 
 const harvestPool = async (sousChefContract) => {
   const gasPrice = getGasPrice()
+  // const tx = await sousChefContract.deposit('0', { ...options, gasPrice })
   const tx = await sousChefContract.deposit('0', { ...options, gasPrice })
   const receipt = await tx.wait()
   return receipt.status
@@ -38,7 +39,9 @@ const useHarvestPool = (sousId, isUsingBnb = false) => {
     } else if (isUsingBnb) {
       await harvestPoolBnb(sousChefContract)
     } else {
-      await harvestPool(sousChefContract)
+      // await harvestPool(sousChefContract)
+      console.log("zzzzzz-harvest")
+      await harvestFarm(masterChefContract, sousId)
     }
     dispatch(updateUserPendingReward(sousId, account))
     dispatch(updateUserBalance(sousId, account))

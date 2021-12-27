@@ -199,37 +199,10 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
             {t('Staked for')}
           </Text>
           <FullWidthButtonMenu activeIndex={stakingDuration} onItemClick={setStakingDuration} scale="sm">
-            <ButtonMenuItem variant="tertiary">{t('1D')}</ButtonMenuItem>
-            <ButtonMenuItem variant="tertiary">{t('7D')}</ButtonMenuItem>
+            <ButtonMenuItem variant="tertiary">{t('15D')}</ButtonMenuItem>
             <ButtonMenuItem variant="tertiary">{t('30D')}</ButtonMenuItem>
-            <ButtonMenuItem variant="tertiary">{t('1Y')}</ButtonMenuItem>
-            <ButtonMenuItem variant="tertiary">{t('5Y')}</ButtonMenuItem>
+            <ButtonMenuItem variant="tertiary">{t('60D')}</ButtonMenuItem>
           </FullWidthButtonMenu>
-          {autoCompoundFrequency === 0 && (
-            <>
-              <Text mt="24px" color="secondary" bold fontSize="12px" textTransform="uppercase">
-                {t('Compounding every')}
-              </Text>
-              <Flex alignItems="center">
-                <Flex flex="1">
-                  <Checkbox scale="sm" checked={compounding} onChange={toggleCompounding} />
-                </Flex>
-                <Flex flex="6">
-                  <FullWidthButtonMenu
-                    disabled={!compounding}
-                    activeIndex={activeCompoundingIndex}
-                    onItemClick={setCompoundingFrequency}
-                    scale="sm"
-                  >
-                    <ButtonMenuItem>{t('1D')}</ButtonMenuItem>
-                    <ButtonMenuItem>{t('7D')}</ButtonMenuItem>
-                    <ButtonMenuItem>{t('14D')}</ButtonMenuItem>
-                    <ButtonMenuItem>{t('30D')}</ButtonMenuItem>
-                  </FullWidthButtonMenu>
-                </Flex>
-              </Flex>
-            </>
-          )}
         </Flex>
         <AnimatedArrow calculatorState={state} />
         <Flex>

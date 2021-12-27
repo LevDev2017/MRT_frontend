@@ -15,9 +15,10 @@ import useHarvestFarm from '../../hooks/useHarvestFarm'
 interface FarmCardActionsProps {
   earnings?: BigNumber
   pid?: number
+  canHarvest?: boolean
 }
 
-const HarvestAction: React.FC<FarmCardActionsProps> = ({ earnings, pid }) => {
+const HarvestAction: React.FC<FarmCardActionsProps> = ({ earnings, pid, canHarvest }) => {
   const { account } = useWeb3React()
   const { toastSuccess, toastError } = useToast()
   const { t } = useTranslation()
@@ -37,15 +38,16 @@ const HarvestAction: React.FC<FarmCardActionsProps> = ({ earnings, pid }) => {
           <Balance fontSize="12px" color="textSubtle" decimals={2} value={earningsBusd} unit=" USD" prefix="~" />
         )}
       </Flex>
+
       <Button
-        disabled={rawEarningsBalance.eq(0) || pendingTx}
+        disabled={(!canHarvest || ( rawEarningsBalance.eq(0) || pendingTx ))}
         onClick={async () => {
           setPendingTx(true)
           try {
             await onReward()
             toastSuccess(
-              `${t('Collected')}!`,
-              t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'CAKE' }),
+              `${t('Harvested')}!`,
+              t('Your %symbol% earnings have been sent to your wallet!', { symbol: 'MRT' }),
             )
           } catch (e) {
             toastError(
@@ -59,8 +61,9 @@ const HarvestAction: React.FC<FarmCardActionsProps> = ({ earnings, pid }) => {
           dispatch(fetchFarmUserDataAsync({ account, pids: [pid] }))
         }}
       >
-        {pendingTx ? t('Collecting') : t('Collect')}
+        {pendingTx ? t('Harvesting') : t('Harvest')}
       </Button>
+
     </Flex>
   )
 }

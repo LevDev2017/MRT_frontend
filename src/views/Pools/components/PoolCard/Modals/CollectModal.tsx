@@ -49,8 +49,8 @@ const CollectModal: React.FC<CollectModalProps> = ({
   const [shouldCompound, setShouldCompound] = useState(isCompoundPool)
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     <>
-      <Text mb="12px">{t('Compound: collect and restake CAKE into pool.')}</Text>
-      <Text>{t('Harvest: collect CAKE and send to wallet')}</Text>
+      <Text mb="12px">{t('Compound: collect and restake MRT into pool.')}</Text>
+      <Text>{t('Harvest: collect MRT and send to wallet')}</Text>
     </>,
     { placement: 'bottom-end', tooltipOffset: [20, 10] },
   )
@@ -60,6 +60,7 @@ const CollectModal: React.FC<CollectModalProps> = ({
     // compounding
     if (shouldCompound) {
       try {
+        console.log("compountcompound!!!!!")
         await onStake(fullBalance, earningToken.decimals)
         toastSuccess(
           `${t('Compounded')}!`,
@@ -75,6 +76,7 @@ const CollectModal: React.FC<CollectModalProps> = ({
     } else {
       // harvesting
       try {
+        console.log("harvestharvest!!!!!")
         await onReward()
         toastSuccess(
           `${t('Harvested')}!`,

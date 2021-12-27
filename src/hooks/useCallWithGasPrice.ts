@@ -13,7 +13,6 @@ import { get } from 'lodash'
  */
 export function useCallWithGasPrice() {
   const gasPrice = useGasPrice()
-
   const callWithGasPrice = useCallback(
     async (
       contract: Contract,
@@ -23,12 +22,10 @@ export function useCallWithGasPrice() {
     ): Promise<ethers.providers.TransactionResponse> => {
       const contractMethod = get(contract, methodName)
       const hasManualGasPriceOverride = overrides?.gasPrice
-
       const tx = await contractMethod(
         ...methodArgs,
         hasManualGasPriceOverride ? { ...overrides } : { ...overrides, gasPrice },
       )
-
       return tx
     },
     [gasPrice],

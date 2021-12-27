@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js'
 import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { Flex, Text, Button, Modal, LinkExternal, CalculateIcon, IconButton } from '@pancakeswap/uikit'
+import { Flex, Text, Button, Modal, Message, LinkExternal, CalculateIcon, IconButton } from '@pancakeswap/uikit'
+import useTheme from 'hooks/useTheme'
 import { ModalActions, ModalInput } from 'components/Modal'
 import RoiCalculatorModal from 'components/RoiCalculatorModal'
 import { useTranslation } from 'contexts/Localization'
@@ -59,6 +60,8 @@ const DepositModal: React.FC<DepositModalProps> = ({
     return getFullDisplayBalance(max)
   }, [max])
 
+  const { theme } = useTheme()
+
   const lpTokensToStake = new BigNumber(val)
   const fullBalanceNumber = new BigNumber(fullBalance)
 
@@ -110,7 +113,11 @@ const DepositModal: React.FC<DepositModalProps> = ({
   }
 
   return (
-    <Modal title={t('Stake LP tokens')} onDismiss={onDismiss}>
+    <Modal 
+    title={t('Stake LP tokens')} 
+    onDismiss={onDismiss}
+    headerBackground={theme.colors.gradients.cardHeader}
+    >
       <ModalInput
         value={val}
         onSelectMax={handleSelectMax}
@@ -120,17 +127,6 @@ const DepositModal: React.FC<DepositModalProps> = ({
         addLiquidityUrl={addLiquidityUrl}
         inputTitle={t('Stake')}
       />
-      <Flex mt="24px" alignItems="center" justifyContent="space-between">
-        <Text mr="8px" color="textSubtle">
-          {t('Annual ROI at current rates')}:
-        </Text>
-        <AnnualRoiContainer alignItems="center" onClick={() => setShowRoiCalculator(true)}>
-          <AnnualRoiDisplay>${formattedAnnualRoi}</AnnualRoiDisplay>
-          <IconButton variant="text" scale="sm">
-            <CalculateIcon color="textSubtle" width="18px" />
-          </IconButton>
-        </AnnualRoiContainer>
-      </Flex>
       <ModalActions>
         <Button variant="secondary" onClick={onDismiss} width="100%" disabled={pendingTx}>
           {t('Cancel')}
@@ -160,6 +156,14 @@ const DepositModal: React.FC<DepositModalProps> = ({
           {pendingTx ? t('Confirming') : t('Confirm')}
         </Button>
       </ModalActions>
+      <Flex mt="24px" alignItems="center" justifyContent="space-between" style={{ maxWidth: '420px' }}>
+        <Message variant="warning" mb="24px">
+          <Text>
+            {t("Note: Depositing additional LP tokens will reset the lock so that ALL deposited tokens will unlock at the same time.",
+            )}
+          </Text>
+        </Message>
+      </Flex>
       <LinkExternal href={addLiquidityUrl} style={{ alignSelf: 'center' }}>
         {t('Get %symbol%', { symbol: tokenName })}
       </LinkExternal>

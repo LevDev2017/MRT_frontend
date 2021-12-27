@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState }  from 'react'
 import { Flex, Text, Button, IconButton, AddIcon, MinusIcon, useModal, Skeleton, useTooltip } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -35,12 +35,18 @@ const StakeAction: React.FC<StakeActionsProps> = ({
 
   const [onPresentTokenRequired] = useModal(<NotEnoughTokensModal tokenSymbol={stakingToken.symbol} />)
 
+  const [withdrawLocked, setWidrawLocked] = useState(false)
+  const onStaked = () => {
+    setWidrawLocked(true)
+  }
+
   const [onPresentStake] = useModal(
     <StakeModal
       isBnbPool={isBnbPool}
       pool={pool}
       stakingTokenBalance={stakingTokenBalance}
       stakingTokenPrice={stakingTokenPrice}
+      onStaked={onStaked}
     />,
   )
 
@@ -82,7 +88,7 @@ const StakeAction: React.FC<StakeActionsProps> = ({
           </>
         </Flex>
         <Flex>
-          <IconButton variant="secondary" onClick={onPresentUnstake} mr="6px">
+          <IconButton variant="secondary" onClick={onPresentUnstake} disabled={withdrawLocked} mr="6px">
             <MinusIcon color="primary" width="24px" />
           </IconButton>
           {reachStakingLimit ? (

@@ -14,6 +14,7 @@ interface HarvestActionsProps {
   earningTokenPrice: number
   isBnbPool: boolean
   isLoading?: boolean
+  canHarvest?: boolean
 }
 
 const HarvestActions: React.FC<HarvestActionsProps> = ({
@@ -23,6 +24,7 @@ const HarvestActions: React.FC<HarvestActionsProps> = ({
   isBnbPool,
   earningTokenPrice,
   isLoading = false,
+  canHarvest = false
 }) => {
   const { t } = useTranslation()
   const earningTokenBalance = getBalanceNumber(earnings, earningToken.decimals)
@@ -32,7 +34,7 @@ const HarvestActions: React.FC<HarvestActionsProps> = ({
 
   const fullBalance = getFullDisplayBalance(earnings, earningToken.decimals)
   const hasEarnings = earnings.toNumber() > 0
-  const isCompoundPool = sousId === 0
+  const isCompoundPool = true
 
   const [onPresentCollect] = useModal(
     <CollectModal
@@ -53,7 +55,7 @@ const HarvestActions: React.FC<HarvestActionsProps> = ({
           <Skeleton width="80px" height="48px" />
         ) : (
           <>
-            {hasEarnings ? (
+            {(hasEarnings) ? (
               <>
                 <Balance bold fontSize="20px" decimals={5} value={earningTokenBalance} />
                 {earningTokenPrice > 0 && (
@@ -79,7 +81,7 @@ const HarvestActions: React.FC<HarvestActionsProps> = ({
           </>
         )}
       </Flex>
-      <Button disabled={!hasEarnings} onClick={onPresentCollect}>
+      <Button disabled={!(hasEarnings && canHarvest)} onClick={onPresentCollect}>
         {isCompoundPool ? t('Collect') : t('Harvest')}
       </Button>
     </Flex>

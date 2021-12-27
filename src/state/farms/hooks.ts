@@ -17,6 +17,8 @@ const deserializeFarmUserData = (farm: SerializedFarm): DeserializedFarmUserData
     tokenBalance: farm.userData ? new BigNumber(farm.userData.tokenBalance) : BIG_ZERO,
     stakedBalance: farm.userData ? new BigNumber(farm.userData.stakedBalance) : BIG_ZERO,
     earnings: farm.userData ? new BigNumber(farm.userData.earnings) : BIG_ZERO,
+    canHarvest: farm.userData ? farm.userData.canHarvest : false,
+    lastDepositTime: farm.userData ? new BigNumber(farm.userData.lastDepositTime) : BIG_ZERO,
   }
 }
 
@@ -40,6 +42,8 @@ const deserializeFarm = (farm: SerializedFarm): DeserializedFarm => {
     lpTotalSupply: farm.lpTotalSupply ? new BigNumber(farm.lpTotalSupply) : BIG_ZERO,
     tokenPriceVsQuote: farm.tokenPriceVsQuote ? new BigNumber(farm.tokenPriceVsQuote) : BIG_ZERO,
     poolWeight: farm.poolWeight ? new BigNumber(farm.poolWeight) : BIG_ZERO,
+    tokenPerBlock: farm.tokenPerBlock ? new BigNumber(farm.tokenPerBlock) : BIG_ZERO,
+    withdrawLockPeriod: farm.withdrawLockPeriod ? new BigNumber(farm.withdrawLockPeriod) : BIG_ZERO,
   }
 }
 
@@ -109,12 +113,14 @@ export const useFarmFromLpSymbol = (lpSymbol: string): DeserializedFarm => {
 
 export const useFarmUser = (pid): DeserializedFarmUserData => {
   const { userData } = useFarmFromPid(pid)
-  const { allowance, tokenBalance, stakedBalance, earnings } = userData
+  const { allowance, tokenBalance, stakedBalance, earnings, canHarvest, lastDepositTime } = userData
   return {
     allowance,
     tokenBalance,
     stakedBalance,
     earnings,
+    canHarvest,
+    lastDepositTime
   }
 }
 
@@ -145,10 +151,10 @@ export const useLpTokenPrice = (symbol: string) => {
 // /!\ Deprecated , use the BUSD hook in /hooks
 
 export const usePriceCakeBusd = (): BigNumber => {
-  const cakeBnbFarm = useFarmFromPid(251)
+/*  const cakeBnbFarm = useFarmFromPid(251) */
+  const cakeBnbFarm = useFarmFromPid(1)
 
   const cakePriceBusdAsString = cakeBnbFarm.tokenPriceBusd
-
   const cakePriceBusd = useMemo(() => {
     return new BigNumber(cakePriceBusdAsString)
   }, [cakePriceBusdAsString])

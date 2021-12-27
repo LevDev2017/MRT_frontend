@@ -29,6 +29,8 @@ interface SerializedFarmUserData {
   tokenBalance: string
   stakedBalance: string
   earnings: string
+  canHarvest: boolean
+  lastDepositTime: string
 }
 
 export interface DeserializedFarmUserData {
@@ -36,6 +38,8 @@ export interface DeserializedFarmUserData {
   tokenBalance: BigNumber
   stakedBalance: BigNumber
   earnings: BigNumber
+  canHarvest: boolean
+  lastDepositTime: BigNumber
 }
 
 export interface SerializedFarm extends SerializedFarmConfig {
@@ -46,7 +50,10 @@ export interface SerializedFarm extends SerializedFarmConfig {
   lpTotalSupply?: SerializedBigNumber
   tokenPriceVsQuote?: SerializedBigNumber
   poolWeight?: SerializedBigNumber
+  lpTokenValue?: SerializedBigNumber
   userData?: SerializedFarmUserData
+  tokenPerBlock?: SerializedBigNumber
+  withdrawLockPeriod?: SerializedBigNumber
 }
 
 export interface DeserializedFarm extends DeserializedFarmConfig {
@@ -55,9 +62,12 @@ export interface DeserializedFarm extends DeserializedFarmConfig {
   tokenAmountTotal?: BigNumber
   lpTotalInQuoteToken?: BigNumber
   lpTotalSupply?: BigNumber
+  lpTokenValue?: BigNumber
   tokenPriceVsQuote?: BigNumber
   poolWeight?: BigNumber
   userData?: DeserializedFarmUserData
+  tokenPerBlock?: BigNumber
+  withdrawLockPeriod?: BigNumber
 }
 
 interface CorePoolProps {
@@ -77,6 +87,8 @@ export interface DeserializedPool extends DeserializedPoolConfig, CorePoolProps 
     stakingTokenBalance: BigNumber
     stakedBalance: BigNumber
     pendingReward: BigNumber
+    lastDepositTime: BigNumber
+    canHarvest: boolean
   }
 }
 
@@ -88,6 +100,8 @@ export interface SerializedPool extends SerializedPoolConfig, CorePoolProps {
     stakingTokenBalance: SerializedBigNumber
     stakedBalance: SerializedBigNumber
     pendingReward: SerializedBigNumber
+    lastDepositTime: SerializedBigNumber
+    canHarvest: boolean
   }
 }
 

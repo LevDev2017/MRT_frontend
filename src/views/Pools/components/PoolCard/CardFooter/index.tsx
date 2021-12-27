@@ -26,7 +26,7 @@ const Footer: React.FC<FooterProps> = ({ pool, account }) => {
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const manualTooltipText = t('You must harvest and compound your earnings from this pool manually.')
+  const manualTooltipText = t('You must harvest and compound your earnings from this pool manually. \r\n\rWARNING: Compounding your Meta Rewards will reset your lock time!')
   const autoTooltipText = t(
     'Any funds you stake in this pool will be automagically harvested and restaked (compounded) for you.',
   )

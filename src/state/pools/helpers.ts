@@ -10,6 +10,8 @@ type UserData =
       stakingTokenBalance: number | string
       stakedBalance: number | string
       pendingReward: number | string
+      lastDepositTime: number | string
+      canHarvest: boolean
     }
 
 export const transformUserData = (userData: UserData) => {
@@ -18,6 +20,8 @@ export const transformUserData = (userData: UserData) => {
     stakingTokenBalance: userData ? new BigNumber(userData.stakingTokenBalance) : BIG_ZERO,
     stakedBalance: userData ? new BigNumber(userData.stakedBalance) : BIG_ZERO,
     pendingReward: userData ? new BigNumber(userData.pendingReward) : BIG_ZERO,
+    lastDepositTime: userData ? new BigNumber(userData.lastDepositTime) : BIG_ZERO,
+    canHarvest: userData ? userData.canHarvest : false
   }
 }
 
